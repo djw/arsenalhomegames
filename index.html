@@ -1,0 +1,19 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Arsenal Home Games</title>
+	<meta name="author" content="Dan Wilson">
+	<meta name="viewport" content="width=540" />
+	<!-- Date: 2010-03-14 -->
+</head>
+<body>
+<table>
+    {% for game in games %}
+    <tr>
+        <td>{{game.StartTime|date:"r"}}</td>
+        <td>{{game.Summary}}</td>
+    </tr>
+    {% endfor %}
+</body>
+</html>
