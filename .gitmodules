@@ -1,0 +1,3 @@
+[submodule "vendor/tweepy-appengine"]
+	path = vendor/tweepy-appengine
+	url = git://github.com/gumptionthomas/tweepy-appengine.git
