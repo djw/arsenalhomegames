@@ -23,9 +23,10 @@ from google.appengine.ext.webapp import template
 import os
 import datetime
 import icalendar
+from pytz.gae import pytz
 
-ical_url = "http://www.arsenal.com/_scripts/ical.ics?tid=1006&sid=117"
-
+ical_url = "http://www.arsenal.com/_scripts/ical.ics?tid=1006&sid=118"
+london = pytz.timezone("Europe/London")
 
 class MainHandler(webapp.RequestHandler):
 
@@ -33,15 +34,17 @@ class MainHandler(webapp.RequestHandler):
         result = urlfetch.fetch(ical_url)
         cal = icalendar.Calendar.from_string(result.content)
         games = []
+        today = False
         for c in cal.walk('VEVENT'):
             try:
-                if c["LOCATION"] == "Emirates Stadium" and c["DTSTART"].dt.date() > datetime.date.today():
-                    games.append({"StartTime":c["DTSTART"].dt, "Summary": c["SUMMARY"]})
-                    
+                if c["LOCATION"] == "Emirates Stadium" and c["DTSTART"].dt.date() >= datetime.date.today():
+                    games.append({"StartTime":c["DTSTART"].dt.astimezone(london), "Summary": c["SUMMARY"]})
+                    if c["DTSTART"].dt.date() == datetime.date.today():
+                        today = True
             except KeyError:
                 pass
         path = os.path.join(os.path.dirname(__file__), 'index.html')
-        self.response.out.write(template.render(path, {"games":games}))
+        self.response.out.write(template.render(path, {"games":games, "today":today}))
 
 def main():
     application = webapp.WSGIApplication([('/', MainHandler)],
